@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class SaveImageThread extends Thread {
+class SaveImageThread extends Thread {
 
     private final BufferedImage image;
     private String filePath;

@@ -1,23 +1,49 @@
 package com.waldo.test.client;
 
+import com.waldo.test.ImageSocketServer.SocketCommand;
+import com.waldo.test.ImageSocketServer.SocketMessage;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class Client {
 
+    private static final int msPort = 31213;
     private String serverName;
-    private int txPort;
-    private int rxPort;
+    private String clientName;
+    private int txPort = -1;
+    private int rxPort = -1;
 
-    public Client(String serverName, int txPort, int rxPort) {
+    public Client(String serverName, String clientName) throws IOException {
         this.serverName = serverName;
-        this.txPort = txPort;
-        this.rxPort = rxPort;
+        this.clientName = clientName;
+
+        connectClient(clientName);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    disconnectClient();
+                } catch (IOException e) {
+                    //
+                }
+            }
+        }));
+    }
+
+    public boolean isConnected() {
+        return txPort > 0 && rxPort > 0;
+    }
+
+    public String getClientName() {
+        if (clientName == null) {
+            clientName = "";
+        }
+        return clientName;
     }
 
     private BufferedImage convertImage(File file) throws Exception {
@@ -68,18 +94,18 @@ public class Client {
         return new Dimension(new_width, new_height);
     }
 
-    public void send(File file) throws Exception {
+    public void sendImage(File file) throws Exception {
         if (file.exists()) {
             BufferedImage image = convertImage(file);
             if (image != null) {
                 String name = file.getName();
                 name = name.split("\\.", 2)[0]; // Remove everything after '.'
-                send(image, name);
+                sendImage(image, name);
             }
         }
     }
 
-    public void send(BufferedImage image, String name) throws Exception {
+    public void sendImage(BufferedImage image, String name) throws Exception {
         Socket client = null;
         OutputStreamWriter out = null;
         try {
@@ -109,7 +135,7 @@ public class Client {
         }
     }
 
-    public BufferedImage get(String name) throws Exception {
+    public BufferedImage getImage(String name) throws Exception {
         Socket client = null;
         OutputStreamWriter out = null;
         BufferedImage image;
@@ -138,6 +164,120 @@ public class Client {
                 }
             }
         }
-        return image;
+        if (image.getHeight() > 1 && image.getWidth() > 1) {
+            return image;
+        } else {
+            return null;
+        }
+    }
+
+    private void connectClient(String clientName) throws IOException {
+        if (clientName != null) {
+
+            SocketMessage socketMessage = new SocketMessage(SocketCommand.ConnectClient, clientName);
+
+            Socket client = null;
+            OutputStreamWriter out = null;
+            BufferedReader in = null;
+            try {
+                client = new Socket(serverName, msPort);
+
+                // Write message
+                String message = socketMessage.toString() + "\n";
+                out = new OutputStreamWriter(client.getOutputStream());
+                out.write(message, 0, message.length());
+                out.flush();
+
+                // Receive message
+                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                String input = in.readLine();
+                System.out.println("Server answered: " + input);
+
+                try {
+                    SocketMessage result = SocketMessage.convert(input);
+                    if (result.getCommand().equals(SocketCommand.ConnectClient)) {
+                        String[] ports = result.getMessage().split(",");
+                        txPort = Integer.valueOf(ports[0]);
+                        rxPort = Integer.valueOf(ports[1]);
+                    } else {
+                        // Failed
+                        throw new IOException("Failed to connect client");
+                    }
+                } catch (Exception e) {
+                    throw new IOException("Failed to connect client", e);
+                }
+
+            } finally {
+                if (client != null) {
+                    try {
+                        client.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    private void disconnectClient() throws IOException {
+        if (clientName != null) {
+
+            SocketMessage socketMessage = new SocketMessage(SocketCommand.DisconnectClient, getClientName());
+
+            Socket client = null;
+            OutputStreamWriter out = null;
+            BufferedReader in = null;
+            try {
+                client = new Socket(serverName, msPort);
+
+                // Write message
+                String message = socketMessage.toString() + "\n";
+                out = new OutputStreamWriter(client.getOutputStream());
+                out.write(message, 0, message.length());
+                out.flush();
+
+                // Receive message
+                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                String input = in.readLine();
+                System.out.println("Server answered: " + input);
+
+            } finally {
+                if (client != null) {
+                    try {
+                        client.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 }

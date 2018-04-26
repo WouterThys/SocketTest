@@ -1,64 +1,64 @@
 package com.waldo.test.ImageSocketServer;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
-public class MessageThread extends Thread {
+public class MessageThread extends SocketThread {
 
-    private ServerSocket serverSocket;
-
-    public MessageThread(int port) throws Exception {
-        this.serverSocket = new ServerSocket(port);
+    public interface MessageListener  {
+        SocketMessage onNewMessage(SocketMessage message);
     }
 
-    public void run() {
-        while (true) {
+    private MessageListener messageListener;
+
+    public MessageThread(int port, MessageListener messageListener) throws Exception {
+        super(port);
+        this.messageListener = messageListener;
+    }
+
+    @Override
+    void doInBackground() {
+
+        try {
+            Socket server = serverSocket.accept();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(server.getInputStream()));
+            OutputStreamWriter out = new OutputStreamWriter(server.getOutputStream());
+
+            // Get input
+            String input = in.readLine();
+            String output = "";
+
+            // Handle input
+            if (messageListener != null) {
+                SocketMessage message = SocketMessage.convert(input);
+                if (!message.getCommand().equals(SocketCommand.Invalid)) {
+                    SocketMessage result = messageListener.onNewMessage(message);
+                    output = result.toString();
+                }
+            }
+
+            // Response
+            out.write(output, 0, output.length());
+            out.flush();
+
+            // Close
             try {
-                Socket server = serverSocket.accept();
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(server.getInputStream()));
-                OutputStreamWriter out = new OutputStreamWriter(server.getOutputStream());
-
-                // Get input
-                String input = in.readLine();
-                String output = "";
-
-                // TODO convert input
-                System.out.println("Got: " + input);
-                output = input;
-
-                // Response
-                out.write(output, 0, output.length());
-                out.flush();
-
-                // Close
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } catch (SocketTimeoutException st) {
-                System.out.println("Socket timed out!");
-                break;
+                in.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                break;
-            } catch (Exception ex) {
-                System.out.println("Error: " + ex);
             }
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
 }
