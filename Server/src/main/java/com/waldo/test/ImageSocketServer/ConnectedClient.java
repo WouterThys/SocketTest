@@ -13,8 +13,8 @@ public class ConnectedClient {
     public ConnectedClient(String name) throws Exception {
         this.name = name;
 
-        receiveThread = new ReceiveThread(Main.root);
-        transmitThread = new TransmitThread(Main.root);
+        receiveThread = new ReceiveThread();
+        transmitThread = new TransmitThread();
     }
 
     @Override

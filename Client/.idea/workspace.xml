@@ -19,12 +19,12 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="24" column="11" lean-forward="false" selection-start-line="24" selection-start-column="11" selection-end-line="24" selection-end-column="11" />
+            <state relative-caret-position="75">
+              <caret line="5" column="19" lean-forward="false" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#232#684#0" expanded="true" />
-                <element signature="e#683#684#0" expanded="true" />
+                <element signature="e#176#628#0" expanded="true" />
+                <element signature="e#627#628#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -33,38 +33,61 @@
       <file leaf-file-name="Application.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/Application.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+            <state relative-caret-position="163">
+              <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3785#3952#0" expanded="true" />
-                <element signature="e#3951#3952#0" expanded="true" />
-                <element signature="e#4058#4222#0" expanded="true" />
-                <element signature="e#4221#4222#0" expanded="true" />
-                <element signature="e#4324#4484#0" expanded="true" />
-                <element signature="e#4483#4484#0" expanded="true" />
+                <element signature="e#3629#3630#0" expanded="true" />
+                <element signature="e#3698#3699#0" expanded="true" />
+                <element signature="e#4691#4858#0" expanded="true" />
+                <element signature="e#4857#4858#0" expanded="true" />
+                <element signature="e#4964#5128#0" expanded="true" />
+                <element signature="e#5127#5128#0" expanded="true" />
+                <element signature="e#5233#5396#0" expanded="true" />
+                <element signature="e#5395#5396#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Client.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/Client.java">
+      <file leaf-file-name="SendFullContentTask.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/SendFullContentTask.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="643">
-              <caret line="169" column="24" lean-forward="false" selection-start-line="169" selection-start-column="24" selection-end-line="169" selection-end-column="24" />
+            <state relative-caret-position="345">
+              <caret line="133" column="17" lean-forward="true" selection-start-line="133" selection-start-column="17" selection-end-line="133" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#707#946#0" expanded="true" />
-                <element signature="e#945#946#0" expanded="true" />
-                <element signature="e#990#991#0" expanded="true" />
-                <element signature="e#1037#1038#0" expanded="true" />
-                <element signature="method#convertImage#0;class#Client#0" expanded="false" />
-                <element signature="method#getScaledDimension#0;class#Client#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Client.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/Client.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="480">
+              <caret line="94" column="13" lean-forward="false" selection-start-line="94" selection-start-column="13" selection-end-line="94" selection-end-column="13" />
+              <folding>
+                <element signature="method#Client#0;class#Client#0" expanded="false" />
+                <element signature="method#getClientName#0;class#Client#0" expanded="false" />
+                <element signature="e#1278#1279#0" expanded="true" />
+                <element signature="e#1305#1306#0" expanded="true" />
                 <element signature="method#sendImage#0;class#Client#0" expanded="false" />
-                <element signature="method#sendImage#1;class#Client#0" expanded="false" />
+                <element signature="method#getImage#0;class#Client#0" expanded="false" />
                 <element signature="method#connectClient#0;class#Client#0" expanded="false" />
                 <element signature="method#disconnectClient#0;class#Client#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImageUtils.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/ImageUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="101">
+              <caret line="14" column="58" lean-forward="true" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="58" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -96,10 +119,12 @@
         <option value="$PROJECT_DIR$/src/main/java/com/waldo/test/Application.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/waldo/test/Client.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/waldo/test/server/TransmittingServer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/waldo/test/client/Main.java" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/src/main/java/com/waldo/test/client/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/waldo/test/client/ImageUtils.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/waldo/test/client/Application.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/waldo/test/client/Client.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/waldo/test/client/SendFullContentTask.java" />
       </list>
     </option>
   </component>
@@ -150,6 +175,27 @@
               <item name="SocketClient" type="b2602c69:ProjectViewProjectNode" />
               <item name="Client" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SocketClient" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Client" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SocketClient" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Client" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SocketClient" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Client" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -355,7 +401,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="19" />
+      <option name="time" value="32" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -366,8 +412,8 @@
           <caret line="24" column="11" lean-forward="false" selection-start-line="24" selection-start-column="11" selection-end-line="24" selection-end-column="11" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#232#684#0" expanded="true" />
-            <element signature="e#683#684#0" expanded="true" />
+            <element signature="e#176#628#0" expanded="true" />
+            <element signature="e#627#628#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -378,12 +424,14 @@
           <caret line="20" column="42" lean-forward="false" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3785#3952#0" expanded="true" />
-            <element signature="e#3951#3952#0" expanded="true" />
-            <element signature="e#4058#4222#0" expanded="true" />
-            <element signature="e#4221#4222#0" expanded="true" />
-            <element signature="e#4324#4484#0" expanded="true" />
-            <element signature="e#4483#4484#0" expanded="true" />
+            <element signature="e#3629#3630#0" expanded="true" />
+            <element signature="e#3698#3699#0" expanded="true" />
+            <element signature="e#4691#4858#0" expanded="true" />
+            <element signature="e#4857#4858#0" expanded="true" />
+            <element signature="e#4964#5128#0" expanded="true" />
+            <element signature="e#5127#5128#0" expanded="true" />
+            <element signature="e#5233#5396#0" expanded="true" />
+            <element signature="e#5395#5396#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -393,15 +441,12 @@
         <state relative-caret-position="555">
           <caret line="90" column="24" lean-forward="true" selection-start-line="89" selection-start-column="12" selection-end-line="90" selection-end-column="24" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#707#946#0" expanded="true" />
-            <element signature="e#945#946#0" expanded="true" />
-            <element signature="e#990#991#0" expanded="true" />
-            <element signature="e#1037#1038#0" expanded="true" />
-            <element signature="method#convertImage#0;class#Client#0" expanded="false" />
-            <element signature="method#getScaledDimension#0;class#Client#0" expanded="false" />
+            <element signature="method#Client#0;class#Client#0" expanded="false" />
+            <element signature="method#getClientName#0;class#Client#0" expanded="false" />
+            <element signature="e#1278#1279#0" expanded="true" />
+            <element signature="e#1305#1306#0" expanded="true" />
             <element signature="method#sendImage#0;class#Client#0" expanded="false" />
-            <element signature="method#sendImage#1;class#Client#0" expanded="false" />
+            <element signature="method#getImage#0;class#Client#0" expanded="false" />
             <element signature="method#connectClient#0;class#Client#0" expanded="false" />
             <element signature="method#disconnectClient#0;class#Client#0" expanded="false" />
           </folding>
@@ -414,8 +459,8 @@
           <caret line="24" column="11" lean-forward="false" selection-start-line="24" selection-start-column="11" selection-end-line="24" selection-end-column="11" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#232#684#0" expanded="true" />
-            <element signature="e#683#684#0" expanded="true" />
+            <element signature="e#176#628#0" expanded="true" />
+            <element signature="e#627#628#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -426,15 +471,12 @@
         <state relative-caret-position="1245">
           <caret line="89" column="46" lean-forward="true" selection-start-line="89" selection-start-column="46" selection-end-line="89" selection-end-column="46" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#707#946#0" expanded="true" />
-            <element signature="e#945#946#0" expanded="true" />
-            <element signature="e#990#991#0" expanded="true" />
-            <element signature="e#1037#1038#0" expanded="true" />
-            <element signature="method#convertImage#0;class#Client#0" expanded="false" />
-            <element signature="method#getScaledDimension#0;class#Client#0" expanded="false" />
+            <element signature="method#Client#0;class#Client#0" expanded="false" />
+            <element signature="method#getClientName#0;class#Client#0" expanded="false" />
+            <element signature="e#1278#1279#0" expanded="true" />
+            <element signature="e#1305#1306#0" expanded="true" />
             <element signature="method#sendImage#0;class#Client#0" expanded="false" />
-            <element signature="method#sendImage#1;class#Client#0" expanded="false" />
+            <element signature="method#getImage#0;class#Client#0" expanded="false" />
             <element signature="method#connectClient#0;class#Client#0" expanded="false" />
             <element signature="method#disconnectClient#0;class#Client#0" expanded="false" />
           </folding>
@@ -447,12 +489,14 @@
           <caret line="20" column="42" lean-forward="false" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3785#3952#0" expanded="true" />
-            <element signature="e#3951#3952#0" expanded="true" />
-            <element signature="e#4058#4222#0" expanded="true" />
-            <element signature="e#4221#4222#0" expanded="true" />
-            <element signature="e#4324#4484#0" expanded="true" />
-            <element signature="e#4483#4484#0" expanded="true" />
+            <element signature="e#3629#3630#0" expanded="true" />
+            <element signature="e#3698#3699#0" expanded="true" />
+            <element signature="e#4691#4858#0" expanded="true" />
+            <element signature="e#4857#4858#0" expanded="true" />
+            <element signature="e#4964#5128#0" expanded="true" />
+            <element signature="e#5127#5128#0" expanded="true" />
+            <element signature="e#5233#5396#0" expanded="true" />
+            <element signature="e#5395#5396#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -471,12 +515,14 @@
           <caret line="57" column="44" lean-forward="false" selection-start-line="57" selection-start-column="44" selection-end-line="57" selection-end-column="44" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3785#3952#0" expanded="true" />
-            <element signature="e#3951#3952#0" expanded="true" />
-            <element signature="e#4058#4222#0" expanded="true" />
-            <element signature="e#4221#4222#0" expanded="true" />
-            <element signature="e#4324#4484#0" expanded="true" />
-            <element signature="e#4483#4484#0" expanded="true" />
+            <element signature="e#3629#3630#0" expanded="true" />
+            <element signature="e#3698#3699#0" expanded="true" />
+            <element signature="e#4691#4858#0" expanded="true" />
+            <element signature="e#4857#4858#0" expanded="true" />
+            <element signature="e#4964#5128#0" expanded="true" />
+            <element signature="e#5127#5128#0" expanded="true" />
+            <element signature="e#5233#5396#0" expanded="true" />
+            <element signature="e#5395#5396#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -487,15 +533,12 @@
         <state relative-caret-position="390">
           <caret line="26" column="37" lean-forward="false" selection-start-line="26" selection-start-column="37" selection-end-line="26" selection-end-column="37" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#707#946#0" expanded="true" />
-            <element signature="e#945#946#0" expanded="true" />
-            <element signature="e#990#991#0" expanded="true" />
-            <element signature="e#1037#1038#0" expanded="true" />
-            <element signature="method#convertImage#0;class#Client#0" expanded="false" />
-            <element signature="method#getScaledDimension#0;class#Client#0" expanded="false" />
+            <element signature="method#Client#0;class#Client#0" expanded="false" />
+            <element signature="method#getClientName#0;class#Client#0" expanded="false" />
+            <element signature="e#1278#1279#0" expanded="true" />
+            <element signature="e#1305#1306#0" expanded="true" />
             <element signature="method#sendImage#0;class#Client#0" expanded="false" />
-            <element signature="method#sendImage#1;class#Client#0" expanded="false" />
+            <element signature="method#getImage#0;class#Client#0" expanded="false" />
             <element signature="method#connectClient#0;class#Client#0" expanded="false" />
             <element signature="method#disconnectClient#0;class#Client#0" expanded="false" />
           </folding>
@@ -508,8 +551,8 @@
           <caret line="21" column="35" lean-forward="true" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#232#684#0" expanded="true" />
-            <element signature="e#683#684#0" expanded="true" />
+            <element signature="e#176#628#0" expanded="true" />
+            <element signature="e#627#628#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -528,8 +571,8 @@
           <caret line="45" column="0" lean-forward="false" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#232#684#0" expanded="true" />
-            <element signature="e#683#684#0" expanded="true" />
+            <element signature="e#176#628#0" expanded="true" />
+            <element signature="e#627#628#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -540,8 +583,8 @@
           <caret line="13" column="34" lean-forward="false" selection-start-line="13" selection-start-column="34" selection-end-line="13" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#232#684#0" expanded="true" />
-            <element signature="e#683#684#0" expanded="true" />
+            <element signature="e#176#628#0" expanded="true" />
+            <element signature="e#627#628#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -552,8 +595,8 @@
           <caret line="21" column="24" lean-forward="true" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#232#684#0" expanded="true" />
-            <element signature="e#683#684#0" expanded="true" />
+            <element signature="e#176#628#0" expanded="true" />
+            <element signature="e#627#628#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -585,7 +628,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/ImageUtils.java" />
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -594,50 +636,69 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/ImageUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="11" lean-forward="false" selection-start-line="24" selection-start-column="11" selection-end-line="24" selection-end-column="11" />
+        <state relative-caret-position="101">
+          <caret line="14" column="58" lean-forward="true" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="58" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#232#684#0" expanded="true" />
-            <element signature="e#683#684#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="19" lean-forward="false" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#176#628#0" expanded="true" />
+            <element signature="e#627#628#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/Application.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+        <state relative-caret-position="163">
+          <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3785#3952#0" expanded="true" />
-            <element signature="e#3951#3952#0" expanded="true" />
-            <element signature="e#4058#4222#0" expanded="true" />
-            <element signature="e#4221#4222#0" expanded="true" />
-            <element signature="e#4324#4484#0" expanded="true" />
-            <element signature="e#4483#4484#0" expanded="true" />
+            <element signature="e#3629#3630#0" expanded="true" />
+            <element signature="e#3698#3699#0" expanded="true" />
+            <element signature="e#4691#4858#0" expanded="true" />
+            <element signature="e#4857#4858#0" expanded="true" />
+            <element signature="e#4964#5128#0" expanded="true" />
+            <element signature="e#5127#5128#0" expanded="true" />
+            <element signature="e#5233#5396#0" expanded="true" />
+            <element signature="e#5395#5396#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/Client.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="643">
-          <caret line="169" column="24" lean-forward="false" selection-start-line="169" selection-start-column="24" selection-end-line="169" selection-end-column="24" />
+        <state relative-caret-position="480">
+          <caret line="94" column="13" lean-forward="false" selection-start-line="94" selection-start-column="13" selection-end-line="94" selection-end-column="13" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#707#946#0" expanded="true" />
-            <element signature="e#945#946#0" expanded="true" />
-            <element signature="e#990#991#0" expanded="true" />
-            <element signature="e#1037#1038#0" expanded="true" />
-            <element signature="method#convertImage#0;class#Client#0" expanded="false" />
-            <element signature="method#getScaledDimension#0;class#Client#0" expanded="false" />
+            <element signature="method#Client#0;class#Client#0" expanded="false" />
+            <element signature="method#getClientName#0;class#Client#0" expanded="false" />
+            <element signature="e#1278#1279#0" expanded="true" />
+            <element signature="e#1305#1306#0" expanded="true" />
             <element signature="method#sendImage#0;class#Client#0" expanded="false" />
-            <element signature="method#sendImage#1;class#Client#0" expanded="false" />
+            <element signature="method#getImage#0;class#Client#0" expanded="false" />
             <element signature="method#connectClient#0;class#Client#0" expanded="false" />
             <element signature="method#disconnectClient#0;class#Client#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/waldo/test/client/SendFullContentTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="133" column="17" lean-forward="true" selection-start-line="133" selection-start-column="17" selection-end-line="133" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

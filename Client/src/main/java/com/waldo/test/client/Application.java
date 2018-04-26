@@ -1,5 +1,7 @@
 package com.waldo.test.client;
 
+import com.waldo.test.ImageSocketServer.ImageType;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +14,7 @@ public class Application extends JFrame implements ActionListener {
 
     private JLabel imageLabel;
 
-    private JButton sendBtn;
+    private JButton sendAllBtn;
     private JButton selectImageBtn;
     private JButton getImageBtn;
 
@@ -26,6 +28,7 @@ public class Application extends JFrame implements ActionListener {
             client = new Client("192.168.0.182", "Test");
             selectImageBtn.setEnabled(client.isConnected());
             getImageBtn.setEnabled(client.isConnected());
+            sendAllBtn.setEnabled(client.isConnected());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -35,21 +38,21 @@ public class Application extends JFrame implements ActionListener {
     private void createGui() {
         imageLabel = new JLabel();
 
-        selectImageBtn = new JButton("Select image");
+        selectImageBtn = new JButton("Send image");
         selectImageBtn.addActionListener(this);
 
-        getImageBtn = new JButton("Get");
+        getImageBtn = new JButton("Get image");
         getImageBtn.addActionListener(this);
 
-        sendBtn = new JButton("Command");
-        sendBtn.addActionListener(this);
+        sendAllBtn = new JButton("Send all");
+        sendAllBtn.addActionListener(this);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         JPanel btnPanel = new JPanel();
 
-        btnPanel.add(sendBtn);
         btnPanel.add(selectImageBtn);
         btnPanel.add(getImageBtn);
+        btnPanel.add(sendAllBtn);
 
         mainPanel.add(imageLabel, BorderLayout.CENTER);
         mainPanel.add(btnPanel, BorderLayout.NORTH);
@@ -65,7 +68,7 @@ public class Application extends JFrame implements ActionListener {
 
             if (file.exists()) {
                 try {
-                    client.sendImage(file);
+                    client.sendImage(file, ImageType.ItemImage);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -90,7 +93,7 @@ public class Application extends JFrame implements ActionListener {
         if (name != null && !name.isEmpty()) {
 
             try {
-                BufferedImage image = client.getImage(name);
+                BufferedImage image = client.getImage(name, ImageType.ItemImage);
                 if (image != null) {
                     ImageIcon imageIcon = new ImageIcon(image);
                     imageLabel.setIcon(imageIcon);
@@ -109,20 +112,36 @@ public class Application extends JFrame implements ActionListener {
         }
     }
 
-    private void doSend() {
-//        String command = JOptionPane.showInputDialog(
-//                Application.this,
-//                "Enter the name of the image",
-//                "Get image"
-//        );
-//
-//        if (command != null && !command.isEmpty()) {
-//            try {
-//                client.connectClient(command);
-//            } catch (Exception e1) {
-//                e1.printStackTrace();
-//            }
-//        }
+    private void doSendAll() {
+        File selectedFolder = selectFolder();
+        if (selectedFolder != null) {
+            SendFullContentTask task = new SendFullContentTask(client, new SendFullContentTask.SendFullContentListener() {
+                @Override
+                public void onError(Exception exception) {
+                    System.out.println(exception);
+                }
+
+                @Override
+                public void onUpdateState(int state, String description, String... args) {
+                    System.out.println(description);
+                }
+            }, selectedFolder, ImageType.ItemImage);
+            task.startReading();
+        }
+    }
+
+    private File selectFolder() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("Select a folder");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        //
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            return chooser.getSelectedFile();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -142,11 +161,11 @@ public class Application extends JFrame implements ActionListener {
                         doGetImage();
                     }
                 });
-            } else if (e.getSource().equals(sendBtn)) {
+            } else if (e.getSource().equals(sendAllBtn)) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        doSend();
+                        doSendAll();
                     }
                 });
             }

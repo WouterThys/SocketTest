@@ -1,10 +1,10 @@
 package com.waldo.test.client;
 
+import com.waldo.test.ImageSocketServer.ImageType;
 import com.waldo.test.ImageSocketServer.SocketCommand;
 import com.waldo.test.ImageSocketServer.SocketMessage;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
@@ -16,6 +16,8 @@ public class Client {
     private String clientName;
     private int txPort = -1;
     private int rxPort = -1;
+
+    private boolean busy = false;
 
     public Client(String serverName, String clientName) throws IOException {
         this.serverName = serverName;
@@ -46,76 +48,35 @@ public class Client {
         return clientName;
     }
 
-    private BufferedImage convertImage(File file) throws Exception {
-        BufferedImage bufferedImage = null;
-        if (file != null && file.exists()) {
-            BufferedImage inputImage = ImageIO.read(file);
-            if (inputImage != null) {
-                Dimension dimension = getScaledDimension(inputImage.getWidth(), inputImage.getHeight(), new Dimension(256,256));
-
-                Image tmp = inputImage.getScaledInstance(dimension.width, dimension.height, Image.SCALE_SMOOTH);
-                BufferedImage scaled = new BufferedImage(dimension.width, dimension.height, inputImage.getType());
-
-                Graphics2D g2d = scaled.createGraphics();
-                g2d.drawImage(tmp, 0, 0, null);
-                g2d.dispose();
-
-                bufferedImage = new BufferedImage(scaled.getWidth(), scaled.getHeight(), BufferedImage.TYPE_INT_RGB);
-                bufferedImage.createGraphics().drawImage(scaled, 0, 0, Color.WHITE, null);
-
-            }
-        }
-        return bufferedImage;
+    public boolean isBusy() {
+        return busy;
     }
 
-    private Dimension getScaledDimension(int originalWidth, int originalHeight, Dimension boundary) {
-
-        int bound_width = boundary.width;
-        int bound_height = boundary.height;
-        int new_width = originalWidth;
-        int new_height = originalHeight;
-
-        // first check if we need to scale width
-        if (originalWidth > bound_width) {
-            //scale width to fit
-            new_width = bound_width;
-            //scale height to maintain aspect ratio
-            new_height = (new_width * originalHeight) / originalWidth;
-        }
-
-        // then check if we need to scale even with the new height
-        if (new_height > bound_height) {
-            //scale height to fit instead
-            new_height = bound_height;
-            //scale width to maintain aspect ratio
-            new_width = (new_height * originalWidth) / originalHeight;
-        }
-
-        return new Dimension(new_width, new_height);
-    }
-
-    public void sendImage(File file) throws Exception {
+    public void sendImage(File file, ImageType imageType) throws Exception {
         if (file.exists()) {
-            BufferedImage image = convertImage(file);
+            BufferedImage image = ImageUtils.convertImage(file, imageType);
             if (image != null) {
                 String name = file.getName();
                 name = name.split("\\.", 2)[0]; // Remove everything after '.'
-                sendImage(image, name);
+                sendImage(image, name, imageType);
             }
         }
     }
 
-    public void sendImage(BufferedImage image, String name) throws Exception {
+    public void sendImage(BufferedImage image, String name, ImageType imageType) throws IOException {
+        busy = true;
         Socket client = null;
         OutputStreamWriter out = null;
         try {
             client = new Socket(serverName, txPort);
 
-            name = name + "\n";
+            // Send info
+            String imageInfo = imageType.getId() + ";" + name + "\n";
             out = new OutputStreamWriter(client.getOutputStream());
-            out.write(name, 0, name.length());
+            out.write(imageInfo, 0, imageInfo.length());
             out.flush();
 
+            // Send image
             ImageIO.write(image, "JPG", client.getOutputStream());
         } finally {
             if (client != null) {
@@ -132,19 +93,21 @@ public class Client {
                     e.printStackTrace();
                 }
             }
+            busy = false;
         }
     }
 
-    public BufferedImage getImage(String name) throws Exception {
+    public BufferedImage getImage(String name, ImageType imageType) throws Exception {
+        busy = true;
         Socket client = null;
         OutputStreamWriter out = null;
         BufferedImage image;
         try {
             client = new Socket(serverName, rxPort);
 
-            name = name + "\n";
+            String imageInfo = imageType.getId() + ";" + name + "\n";
             out = new OutputStreamWriter(client.getOutputStream());
-            out.write(name, 0, name.length());
+            out.write(imageInfo, 0, imageInfo.length());
             out.flush();
 
             image = ImageIO.read(ImageIO.createImageInputStream(client.getInputStream()));
@@ -163,6 +126,7 @@ public class Client {
                     e.printStackTrace();
                 }
             }
+            busy = false;
         }
         if (image.getHeight() > 1 && image.getWidth() > 1) {
             return image;

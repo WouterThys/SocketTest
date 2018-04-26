@@ -12,7 +12,7 @@ public class Main {
     private static final String RootParam = "RootDir";
 
     // Defaults
-    public static String root = "/home/wouter/Desktop/ImageTest/";
+    public static String rootDirectory = "/home/wouter/Desktop/ImageTest/";
     private final static int msPort = 31213; // Message port
 
     private static final List<ConnectedClient> connectedClients = new ArrayList<>();
@@ -109,7 +109,7 @@ public class Main {
                     switch (split[0]) {
                         case RootParam:
                             if (!split[1].isEmpty()) {
-                                root = split[1];
+                                rootDirectory = split[1];
                             }
                             break;
                     }

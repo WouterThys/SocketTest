@@ -5,11 +5,7 @@ import java.awt.*;
 
 public class Main {
 
-//    private static BufferedImage bufferedImage;
-
-    public static void main(String [] args)
-    {
-
+    public static void main(String [] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
