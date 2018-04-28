@@ -64,36 +64,21 @@ public class Client {
     }
 
     public void sendImage(BufferedImage image, String name, ImageType imageType) throws IOException {
-        busy = true;
-        Socket client = null;
-        OutputStreamWriter out = null;
-        try {
-            client = new Socket(serverName, txPort);
+        try(Socket client = new Socket(serverName, txPort);
+            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            OutputStreamWriter out = new OutputStreamWriter(client.getOutputStream())) {
 
             // Send info
             String imageInfo = imageType.getId() + ";" + name + "\n";
-            out = new OutputStreamWriter(client.getOutputStream());
             out.write(imageInfo, 0, imageInfo.length());
             out.flush();
 
             // Send image
             ImageIO.write(image, "JPG", client.getOutputStream());
-        } finally {
-            if (client != null) {
-                try {
-                    client.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            busy = false;
+
+            // Receive
+            String input = in.readLine();
+            System.out.println("Server: " + input);
         }
     }
 

@@ -15,46 +15,32 @@ class ReceiveThread extends SocketThread {
     }
 
     @Override
-    void doInBackground() {
-        try {
-            Socket server = serverSocket.accept();
+    void doInBackground() throws IOException {
+        try(Socket clientSocket = serverSocket.accept();
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            OutputStreamWriter out = new OutputStreamWriter(clientSocket.getOutputStream())) {
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(server.getInputStream()));
+            // Read image info
+            String imageInfo = in.readLine();
+            BufferedImage img = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
 
-            String imageInfo = br.readLine();
-            BufferedImage img = ImageIO.read(ImageIO.createImageInputStream(server.getInputStream()));
-
+            // Handle input
             String[] split = imageInfo.split(";");
             String typeStr = split[0];
             String name = split[1];
-
             ImageType type = ImageType.fromInt(Integer.valueOf(typeStr));
 
+            // Save image
             SaveImageThread saveImageThread = new SaveImageThread(img, name, type);
             saveImageThread.start();
 
             // Response
-            OutputStreamWriter out = new OutputStreamWriter(server.getOutputStream());
             SocketMessage response = new SocketMessage(SocketCommand.ConnectClient, "OK");
-
             String output = response.toString() + "\n";
             out.write(output, 0, output.length());
             out.flush();
 
-            // Close
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                br.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception ex) {
-            System.out.println("Error: " + ex);
+            System.out.println("Saved image " + name);
         }
     }
 }

@@ -28,7 +28,7 @@ abstract class SocketThread extends Thread {
         running = false;
     }
 
-    abstract void doInBackground();
+    abstract void doInBackground() throws IOException;
 
     public void run() {
         while (running) {
