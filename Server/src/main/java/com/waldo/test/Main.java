@@ -1,9 +1,11 @@
 package com.waldo.test;
 
+import com.waldo.test.ImageSocketServer.CommunicationThread;
 import com.waldo.test.ImageSocketServer.ConnectedClient;
-import com.waldo.test.ImageSocketServer.MessageThread;
+import com.waldo.test.ImageSocketServer.ImageType;
 import com.waldo.test.ImageSocketServer.SocketMessage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,39 +24,76 @@ public class Main {
         readArgs(args);
         System.out.println("Starting image server");
 
-        final MessageThread messageThread = new MessageThread(msPort, new MessageThread.MessageListener() {
+        final CommunicationThread communicationThread = new CommunicationThread(msPort, new CommunicationThread.MessageListener() {
             @Override
             public SocketMessage onNewMessage(SocketMessage message) {
-                System.out.println("Got: " + message);
 
                 SocketMessage result = new SocketMessage(message.getCommand(), "");
                 switch (message.getCommand()) {
+
                     case ConnectClient:
-                        ConnectedClient connectClient = connectClient(message.getMessage());
+                        ConnectedClient connectClient = clientConnect(message.getMessage());
                         if (connectClient != null) {
-                            result.setMessage(connectClient.getReceivePort() + "," + connectClient.getTransmitPort());
+                            result.setMessage("Connected " + connectClient);
                             System.out.println("Connected client: " + connectClient.getName());
                         }
                         break;
+
                     case DisconnectClient:
-                        ConnectedClient disconnectClient = disconnectClient(message.getMessage());
+                        ConnectedClient disconnectClient = clientDisconnect(message.getMessage());
                         if (disconnectClient != null) {
-                            result.setMessage(disconnectClient.getName());
+                            result.setMessage("Disconnected " + disconnectClient);
                             System.out.println("Disconnected client: " + disconnectClient.getName());
                         }
+                        break;
+
+                    case SendImage: {
+                        String[] split = message.getMessage().split(",");
+                        if (split.length == 3) {
+                            String clientName = split[0];
+                            String imageType = split[1];
+                            String imageName = split[2];
+                            ImageType type;
+                            try {
+                                type = ImageType.fromInt(Integer.valueOf(imageType));
+                                int port = clientSendImage(clientName, imageName, type);
+                                result.setMessage(String.valueOf(port));
+                            } catch (Exception e) {
+                                System.err.println("Failed to send image: " + e);
+                            }
+                        }
+                    }
+                        break;
+
+                    case GetImage: {
+                        String[] split = message.getMessage().split(",");
+                        if (split.length == 3) {
+                            String clientName = split[0];
+                            String imageType = split[1];
+                            String imageName = split[2];
+                            ImageType type;
+                            try {
+                                type = ImageType.fromInt(Integer.valueOf(imageType));
+                                int port = clientGetImage(clientName, imageName, type);
+                                result.setMessage(String.valueOf(port));
+                            } catch (Exception e) {
+                                System.err.println("Failed to get image: " + e);
+                            }
+                        }
+                    }
                         break;
                 }
 
                 return result;
             }
         });
-        messageThread.start();
+        communicationThread.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    messageThread.stopRunning();
+                    communicationThread.stopRunning();
                     for (ConnectedClient client : connectedClients) {
                         client.close();
                     }
@@ -65,13 +104,11 @@ public class Main {
         }));
     }
 
-    private static ConnectedClient connectClient(String name) {
+    private static ConnectedClient clientConnect(String name) {
         ConnectedClient client = findClient(name);
         if (client == null) {
             try {
                 client = new ConnectedClient(name);
-                client.start();
-
                 connectedClients.add(client);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -80,14 +117,35 @@ public class Main {
         return client;
     }
 
-    private static ConnectedClient disconnectClient(String name) {
+    private static ConnectedClient clientDisconnect(String name) {
         ConnectedClient client = findClient(name);
         if (client != null) {
             client.close();
-
             connectedClients.remove(client);
         }
         return client;
+    }
+
+    private static int clientSendImage(String clientName, String imageName, ImageType imageType) throws IOException {
+        int port = -1;
+        ConnectedClient client = findClient(clientName);
+
+        if (client != null) {
+            port = client.prepareReceive(imageName, imageType);
+        }
+
+        return port;
+    }
+
+    private static int clientGetImage(String clientName, String imageName, ImageType imageType) throws IOException {
+        int port = -1;
+        ConnectedClient client = findClient(clientName);
+
+        if (client != null) {
+            port = client.prepareTransmit(imageName, imageType);
+        }
+
+        return port;
     }
 
     private static ConnectedClient findClient(String name) {

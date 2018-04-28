@@ -3,7 +3,10 @@ package com.waldo.test.ImageSocketServer;
 public enum SocketCommand {
     Invalid(0, "Invalid"),
     ConnectClient(1, "Connect client"),
-    DisconnectClient(2, "Disconnect client");
+    DisconnectClient(2, "Disconnect client"),
+
+    SendImage(3, "Send image"),
+    GetImage(4, "Get image");
 
     private final int intValue;
     private final String description;
@@ -22,10 +25,6 @@ public enum SocketCommand {
         return intValue;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public static SocketCommand fromInt(int intValue) {
         switch (intValue) {
             default:
@@ -34,6 +33,10 @@ public enum SocketCommand {
                 return ConnectClient;
             case 2:
                 return DisconnectClient;
+            case 3:
+                return SendImage;
+            case 4:
+                return GetImage;
         }
     }
 }

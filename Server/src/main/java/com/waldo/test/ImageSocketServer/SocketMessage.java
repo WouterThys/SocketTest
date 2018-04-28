@@ -2,17 +2,37 @@ package com.waldo.test.ImageSocketServer;
 
 public class SocketMessage {
 
+    public interface OnResponseListener {
+        void onResponse(SocketMessage message);
+    }
+
     private SocketCommand command;
     private String message;
+    private OnResponseListener responseListener;
 
     public SocketMessage(SocketCommand command, String message) {
         this.command = command;
         this.message = message;
     }
 
+    public SocketMessage(SocketCommand command, String message, OnResponseListener responseListener) {
+        this(command, message);
+        this.responseListener = responseListener;
+    }
+
     @Override
     public String toString() {
         return getCommand().getIntValue() + ";" + getMessage();
+    }
+
+    public boolean isValid() {
+        return !getCommand().equals(SocketCommand.Invalid);
+    }
+
+    public void response(SocketMessage response) {
+        if (responseListener != null) {
+            responseListener.onResponse(response);
+        }
     }
 
     public SocketCommand getCommand() {

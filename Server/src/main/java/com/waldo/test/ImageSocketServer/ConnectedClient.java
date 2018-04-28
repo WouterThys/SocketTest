@@ -1,20 +1,21 @@
 package com.waldo.test.ImageSocketServer;
 
-import com.waldo.test.Main;
-
+import java.io.IOException;
 import java.util.Objects;
+import java.util.Vector;
 
 public class ConnectedClient {
 
     private String name;
-    private ReceiveThread receiveThread;
-    private TransmitThread transmitThread;
+    private final Vector<ImageThread> imageThreads = new Vector<>();
 
-    public ConnectedClient(String name) throws Exception {
+    public ConnectedClient(String name) {
         this.name = name;
+    }
 
-        receiveThread = new ReceiveThread();
-        transmitThread = new TransmitThread();
+    @Override
+    public String toString() {
+        return name;
     }
 
     @Override
@@ -30,19 +31,49 @@ public class ConnectedClient {
         return Objects.hash(getName());
     }
 
-    public void start() {
-        try {
-            receiveThread.start();
-            transmitThread.start();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public int prepareReceive(String imageName, ImageType imageType) throws IOException {
+        return addImageThread(new ReceiveThread(imageName, imageType, new ImageThread.OnThreadDoneListener() {
+            @Override
+            public void done(ImageThread thread) {
+                removeImageThread(thread);
+            }
+        }));
+    }
+
+    public int prepareTransmit(String imageName, ImageType imageType) throws IOException {
+        return addImageThread(new TransmitThread(imageName, imageType, new ImageThread.OnThreadDoneListener() {
+            @Override
+            public void done(ImageThread thread) {
+                removeImageThread(thread);
+            }
+        }));
+    }
+
+    private synchronized int addImageThread(ImageThread thread) {
+        int port = -1;
+        if (thread != null) {
+            if (!imageThreads.contains(thread)) {
+                imageThreads.add(thread);
+                thread.start();
+                port = thread.getPort();
+
+                System.out.println("Client " + name + " is running " + imageThreads.size() + " threads");
+            }
+        }
+        return port;
+    }
+
+    private synchronized void removeImageThread(ImageThread thread) {
+        if (thread != null) {
+            imageThreads.remove(thread);
         }
     }
 
     public void close() {
         try {
-            transmitThread.stopRunning();
-            receiveThread.stopRunning();
+//            for (ImageThread thread : imageThreads) {
+//                thread.join();
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,26 +84,6 @@ public class ConnectedClient {
             name = "";
         }
         return name;
-    }
-
-    public int getReceivePort() {
-        int port = -1;
-
-        if (receiveThread != null && receiveThread.isAlive()) {
-            port = receiveThread.getPort();
-        }
-
-        return port;
-    }
-
-    public int getTransmitPort() {
-        int port = -1;
-
-        if (transmitThread != null && transmitThread.isAlive()) {
-            port = transmitThread.getPort();
-        }
-
-        return port;
     }
 
 

@@ -8,9 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
-public class Application extends JFrame implements ActionListener {
+public class Application extends JFrame implements ActionListener, Client.OnImageReceiveListener {
 
     private JLabel imageLabel;
 
@@ -24,14 +23,15 @@ public class Application extends JFrame implements ActionListener {
         super();
 
         createGui();
-        try {
-            client = new Client("192.168.0.182", "Test");
-            selectImageBtn.setEnabled(client.isConnected());
-            getImageBtn.setEnabled(client.isConnected());
-            sendAllBtn.setEnabled(client.isConnected());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        client = new Client("192.168.0.182", "Test");
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                client.close();
+            }
+        }));
     }
 
 
@@ -91,24 +91,7 @@ public class Application extends JFrame implements ActionListener {
         );
 
         if (name != null && !name.isEmpty()) {
-
-            try {
-                BufferedImage image = client.getImage(name, ImageType.ItemImage);
-                if (image != null) {
-                    ImageIcon imageIcon = new ImageIcon(image);
-                    imageLabel.setIcon(imageIcon);
-                } else {
-                    imageLabel.setIcon(null);
-                    JOptionPane.showMessageDialog(
-                            Application.this,
-                            "No such image..",
-                            ":(",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                }
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            client.getImage(name, ImageType.ItemImage, this);
         }
     }
 
@@ -141,6 +124,22 @@ public class Application extends JFrame implements ActionListener {
             return chooser.getSelectedFile();
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public void onImageReceived(BufferedImage image) {
+        if (image != null) {
+            ImageIcon imageIcon = new ImageIcon(image);
+            imageLabel.setIcon(imageIcon);
+        } else {
+            imageLabel.setIcon(null);
+            JOptionPane.showMessageDialog(
+                    Application.this,
+                    "No such image..",
+                    ":(",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 

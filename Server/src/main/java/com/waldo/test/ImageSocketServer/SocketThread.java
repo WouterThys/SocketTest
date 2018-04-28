@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 abstract class SocketThread extends Thread {
 
     ServerSocket serverSocket;
-    private boolean running;
+    private volatile boolean running;
     private int port = -1;
 
     SocketThread(int port) throws IOException {
@@ -30,6 +30,7 @@ abstract class SocketThread extends Thread {
 
     abstract void doInBackground() throws IOException;
 
+    @Override
     public void run() {
         while (running) {
             try {

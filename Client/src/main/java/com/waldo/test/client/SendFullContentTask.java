@@ -59,7 +59,7 @@ public class SendFullContentTask {
     private class GetAllImagesTask extends SwingWorker<Boolean, Void> {
         @Override
         protected Boolean doInBackground() throws Exception {
-            if (client == null || !client.isConnected()) {
+            if (client == null) {
                 failedToSendContent(new Exception("Client is not connected.."));
                 return false;
             }
@@ -129,11 +129,9 @@ public class SendFullContentTask {
                 try {
                     client.sendImage(image, name, imageType);
                     updateState(STATE_SEND, "Sending image " + name, String.valueOf(progress));
-                } catch (IOException ex) {
+                } catch (Exception ex) {
                     updateState(STATE_SEND, "Sending image " + name + " failed", String.valueOf(progress));
                 }
-
-                Thread.sleep(100);
 
                 progress++;
             }
