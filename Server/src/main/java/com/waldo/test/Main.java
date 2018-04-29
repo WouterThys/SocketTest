@@ -4,6 +4,7 @@ import com.waldo.test.ImageSocketServer.CommunicationThread;
 import com.waldo.test.ImageSocketServer.ConnectedClient;
 import com.waldo.test.ImageSocketServer.ImageType;
 import com.waldo.test.ImageSocketServer.SocketMessage;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 public class Main {
 
     private static final String RootParam = "RootDir";
+    private final static Logger logger = Logger.getLogger(Main.class);
 
     // Defaults
     public static String rootDirectory = "/home/wouter/Desktop/ImageTest/";
@@ -22,7 +24,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         readArgs(args);
-        System.out.println("Starting image server");
+        logger.debug("Starting image server");
 
         final CommunicationThread communicationThread = new CommunicationThread(msPort, new CommunicationThread.MessageListener() {
             @Override
@@ -35,7 +37,7 @@ public class Main {
                         ConnectedClient connectClient = clientConnect(message.getMessage());
                         if (connectClient != null) {
                             result.setMessage("Connected " + connectClient);
-                            System.out.println("Connected client: " + connectClient.getName());
+                            logger.debug("Connected client: " + connectClient.getName());
                         }
                         break;
 
@@ -43,7 +45,7 @@ public class Main {
                         ConnectedClient disconnectClient = clientDisconnect(message.getMessage());
                         if (disconnectClient != null) {
                             result.setMessage("Disconnected " + disconnectClient);
-                            System.out.println("Disconnected client: " + disconnectClient.getName());
+                            logger.debug("Disconnected client: " + disconnectClient.getName());
                         }
                         break;
 
@@ -59,7 +61,7 @@ public class Main {
                                 int port = clientSendImage(clientName, imageName, type);
                                 result.setMessage(String.valueOf(port));
                             } catch (Exception e) {
-                                System.err.println("Failed to send image: " + e);
+                                logger.error("Failed to send image", e);
                             }
                         }
                     }
@@ -77,7 +79,7 @@ public class Main {
                                 int port = clientGetImage(clientName, imageName, type);
                                 result.setMessage(String.valueOf(port));
                             } catch (Exception e) {
-                                System.err.println("Failed to get image: " + e);
+                                logger.error("Failed to get image", e);
                             }
                         }
                     }
@@ -97,6 +99,7 @@ public class Main {
                     for (ConnectedClient client : connectedClients) {
                         client.close();
                     }
+                    logger.debug("Stopped image server");
                 } catch (Exception e) {
                     //
                 }

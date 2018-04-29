@@ -1,9 +1,13 @@
 package com.waldo.test.ImageSocketServer;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
 abstract class SocketThread extends Thread {
+
+    private final static Logger logger = Logger.getLogger(SocketThread.class);
 
     ServerSocket serverSocket;
     private volatile boolean running;
@@ -26,26 +30,31 @@ abstract class SocketThread extends Thread {
 
     public synchronized void stopRunning() {
         running = false;
+        this.interrupt();
     }
 
     abstract void doInBackground() throws IOException;
 
     @Override
     public void run() {
-        while (running) {
+        try {
+            while (running) {
+                try {
+                    doInBackground();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             try {
-                doInBackground();
+                serverSocket.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        try {
-            serverSocket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Thread for socket port " + getPort() + " closed");
+        logger.debug("Thread for socket port " + getPort() + " closed");
     }
 }

@@ -29,7 +29,6 @@ public class CommunicationThread extends SocketThread {
             String inputLine, outputLine;
 
             while ((inputLine = in.readLine()) != null) {
-                System.out.println("Client: " + inputLine);
                 if (messageListener != null) {
                     SocketMessage inputMessage = SocketMessage.convert(inputLine);
                     if (inputMessage.isValid()) {

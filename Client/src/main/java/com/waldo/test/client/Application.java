@@ -1,5 +1,6 @@
 package com.waldo.test.client;
 
+
 import com.waldo.test.ImageSocketServer.ImageType;
 
 import javax.swing.*;
@@ -9,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-public class Application extends JFrame implements ActionListener, Client.OnImageReceiveListener {
+public class Application extends JFrame implements ActionListener, Client.ImageClientListener {
 
     private JLabel imageLabel;
 
@@ -24,7 +25,7 @@ public class Application extends JFrame implements ActionListener, Client.OnImag
 
         createGui();
 
-        client = new Client("192.168.0.182", "Test");
+        client = new Client("192.168.0.162", "Test");
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
@@ -91,7 +92,7 @@ public class Application extends JFrame implements ActionListener, Client.OnImag
         );
 
         if (name != null && !name.isEmpty()) {
-            client.getImage(name, ImageType.ItemImage, this);
+            client.getImage(name, ImageType.ItemImage);
         }
     }
 
@@ -169,5 +170,20 @@ public class Application extends JFrame implements ActionListener, Client.OnImag
                 });
             }
         }
+    }
+
+    @Override
+    public void onConnected() {
+
+    }
+
+    @Override
+    public void onDisconnected() {
+
+    }
+
+    @Override
+    public void onImageTransmitted() {
+
     }
 }

@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ImageClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ImageClient_jar</output-path>
+    <root id="archive" name="ImageClient.jar">
+      <element id="module-output" name="ImageClient" />
+      <element id="library" level="project" name="Server" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/ImageServer.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

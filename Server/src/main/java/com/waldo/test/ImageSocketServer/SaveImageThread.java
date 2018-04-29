@@ -1,6 +1,7 @@
 package com.waldo.test.ImageSocketServer;
 
 import com.waldo.test.Main;
+import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -10,6 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 class SaveImageThread extends Thread {
+
+    private final static Logger logger = Logger.getLogger(SaveImageThread.class);
 
     private final BufferedImage image;
     private String imageName;
@@ -24,12 +27,12 @@ class SaveImageThread extends Thread {
     @Override
     public void run() {
         if (imageName == null || imageName.isEmpty()) {
-            System.err.println("Can not save image, image name is invalid..");
+            logger.error("Can not save image, image name is invalid..");
             return;
         }
 
         if (image == null) {
-            System.err.println("Can not save image, image name empty..");
+            logger.error("Can not save image, image name empty..");
             return;
         }
 
@@ -52,10 +55,10 @@ class SaveImageThread extends Thread {
             try {
                 ImageIO.write(image, "jpg", imageFile);
             } catch (IOException e) {
-                System.err.println("Can not save image, " + e);
+                logger.error("Can not save image" , e);
             }
         } else {
-            System.err.println("Can not save image, folder can not be found or created..");
+            logger.error("Can not save image, folder can not be found or created..");
         }
     }
 }

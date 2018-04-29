@@ -1,10 +1,14 @@
 package com.waldo.test.ImageSocketServer;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Vector;
 
 public class ConnectedClient {
+
+    private final static Logger logger = Logger.getLogger(ConnectedClient.class);
 
     private String name;
     private final Vector<ImageThread> imageThreads = new Vector<>();
@@ -57,7 +61,7 @@ public class ConnectedClient {
                 thread.start();
                 port = thread.getPort();
 
-                System.out.println("Client " + name + " is running " + imageThreads.size() + " threads");
+                logger.debug("Client " + name + " is running " + imageThreads.size() + " threads");
             }
         }
         return port;

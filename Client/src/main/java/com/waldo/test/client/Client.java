@@ -6,12 +6,17 @@ import com.waldo.test.ImageSocketServer.SocketMessage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Client {
 
-    public interface OnImageReceiveListener {
+    public interface ImageClientListener {
+        void onConnected();
+        void onDisconnected();
+        void onImageTransmitted();
         void onImageReceived(BufferedImage image);
     }
 
@@ -19,13 +24,15 @@ public class Client {
     private String serverName;
     private String clientName;
 
+    private boolean connected = false;
+
+    private final List<ImageClientListener> imageClientListenerList = new ArrayList<>();
+
     private ClientCommunicationThread communicationThread;
 
     public Client(String serverName, String clientName) {
         this.serverName = serverName;
         this.clientName = clientName;
-
-        connectClient(clientName);
     }
 
     public String getClientName() {
@@ -35,11 +42,49 @@ public class Client {
         return clientName;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
     public void close() {
         try {
             disconnectClient(true);
         } catch (Exception e) {
             //
+        }
+    }
+
+    public void addImageClientListener(ImageClientListener clientListener) {
+        if (!imageClientListenerList.contains(clientListener)) {
+            imageClientListenerList.add(clientListener);
+        }
+    }
+
+    public void removeImageClientListener(ImageClientListener clientListener) {
+        imageClientListenerList.remove(clientListener);
+    }
+
+    public void onClientConnected() {
+        for (ImageClientListener listener : imageClientListenerList) {
+            listener.onConnected();
+        }
+    }
+
+    public void onClientDisconnected() {
+        for (ImageClientListener listener : imageClientListenerList) {
+            listener.onDisconnected();
+        }
+    }
+
+    public void onImageReceived(BufferedImage image) {
+        for (ImageClientListener listener : imageClientListenerList) {
+            listener.onImageReceived(image);
+        }
+    }
+
+    public void onImageTransmitted() {
+        for (ImageClientListener listener : imageClientListenerList) {
+            listener.onImageTransmitted();
         }
     }
 
@@ -69,6 +114,7 @@ public class Client {
                                 // Send image
                                 ImageIO.write(image, "JPG", client.getOutputStream());
                             }
+                            onImageTransmitted();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -79,7 +125,7 @@ public class Client {
         }
     }
 
-    public void getImage(String name, ImageType imageType, final OnImageReceiveListener listener) {
+    public void getImage(String name, ImageType imageType) {
         if (name != null && imageType != null) {
             final String message = clientName + "," + imageType.getId() + "," + name;
             SocketMessage getImageMessage = new SocketMessage(SocketCommand.GetImage, message, new SocketMessage.OnResponseListener() {
@@ -97,20 +143,20 @@ public class Client {
                             e.printStackTrace();
                         }
                     }
-                    if (listener != null) {
+
                         if (image != null && image.getWidth() > 1) {
-                            listener.onImageReceived(image);
+                            onImageReceived(image);
                         } else {
-                            listener.onImageReceived(null);
+                            onImageReceived(null);
                         }
-                    }
+
                 }
             });
             communicationThread.sendMessage(getImageMessage);
         }
     }
 
-    private void connectClient(String clientName) {
+    public void connectClient(String clientName) {
         if (clientName != null) {
 
             if (communicationThread == null) {
@@ -121,18 +167,23 @@ public class Client {
             SocketMessage socketMessage = new SocketMessage(SocketCommand.ConnectClient, clientName, new SocketMessage.OnResponseListener() {
                 @Override
                 public void onResponse(SocketMessage socketMessage) {
-                    System.out.println("Server: " + socketMessage);
+                    connected = socketMessage != null && socketMessage.isValid();
+                    onClientConnected();
                 }
             });
             communicationThread.sendMessage(socketMessage);
         }
     }
 
-    private void disconnectClient(final boolean closeDown) {
+    public void disconnectClient(final boolean closeDown) {
         if (clientName != null) {
             SocketMessage socketMessage = new SocketMessage(SocketCommand.DisconnectClient, clientName, new SocketMessage.OnResponseListener() {
                 @Override
                 public void onResponse(SocketMessage socketMessage) {
+                    if (socketMessage.isValid()) {
+                        connected = false;
+                        onClientDisconnected();
+                    }
                     if (closeDown) {
                         communicationThread.stopRunning();
                     }
