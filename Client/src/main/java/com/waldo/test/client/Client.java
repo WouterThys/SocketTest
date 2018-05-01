@@ -15,8 +15,11 @@ public class Client {
 
     public interface ImageClientListener {
         void onConnected(String clientName);
+
         void onDisconnected(String clientName);
+
         void onImageTransmitted(String imageName, ImageType imageType);
+
         void onImageReceived(BufferedImage image, String imageName, ImageType imageType);
     }
 
@@ -114,7 +117,8 @@ public class Client {
                     if (socketMessage.isValid()) {
                         try {
                             int port = Integer.valueOf(socketMessage.getMessage());
-                            try(Socket client = new Socket(serverName, port)) {
+                            try (Socket client = new Socket(serverName, port)) {
+                                client.setSoTimeout(2000);
                                 // Send image
                                 ImageIO.write(image, "JPG", client.getOutputStream());
                             }
@@ -122,6 +126,8 @@ public class Client {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                    } else {
+                        System.err.println("Invalid message received while sending image " + name);
                     }
                 }
             });
@@ -139,7 +145,7 @@ public class Client {
                     if (socketMessage.isValid()) {
                         try {
                             int port = Integer.valueOf(socketMessage.getMessage());
-                            try(Socket client = new Socket(serverName, port)) {
+                            try (Socket client = new Socket(serverName, port)) {
                                 // Send image
                                 image = ImageIO.read(ImageIO.createImageInputStream(client.getInputStream()));
                             }
@@ -148,11 +154,11 @@ public class Client {
                         }
                     }
 
-                        if (image != null && image.getWidth() > 1) {
-                            onImageReceived(image, name, imageType);
-                        } else {
-                            onImageReceived(null, name, imageType);
-                        }
+                    if (image != null && image.getWidth() > 1) {
+                        onImageReceived(image, name, imageType);
+                    } else {
+                        onImageReceived(null, name, imageType);
+                    }
 
                 }
             });
