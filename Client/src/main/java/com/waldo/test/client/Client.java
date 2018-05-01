@@ -14,10 +14,10 @@ import java.util.List;
 public class Client {
 
     public interface ImageClientListener {
-        void onConnected();
-        void onDisconnected();
-        void onImageTransmitted();
-        void onImageReceived(BufferedImage image);
+        void onConnected(String clientName);
+        void onDisconnected(String clientName);
+        void onImageTransmitted(String imageName, ImageType imageType);
+        void onImageReceived(BufferedImage image, String imageName, ImageType imageType);
     }
 
     private static final int msPort = 31213;
@@ -64,42 +64,46 @@ public class Client {
         imageClientListenerList.remove(clientListener);
     }
 
-    public void onClientConnected() {
+    public void onClientConnected(String clientName) {
         for (ImageClientListener listener : imageClientListenerList) {
-            listener.onConnected();
+            listener.onConnected(clientName);
         }
     }
 
-    public void onClientDisconnected() {
+    public void onClientDisconnected(String clientName) {
         for (ImageClientListener listener : imageClientListenerList) {
-            listener.onDisconnected();
+            listener.onDisconnected(clientName);
         }
     }
 
-    public void onImageReceived(BufferedImage image) {
+    public void onImageReceived(BufferedImage image, String imageName, ImageType imageType) {
         for (ImageClientListener listener : imageClientListenerList) {
-            listener.onImageReceived(image);
+            listener.onImageReceived(image, imageName, imageType);
         }
     }
 
-    public void onImageTransmitted() {
+    public void onImageTransmitted(String imageName, ImageType imageType) {
         for (ImageClientListener listener : imageClientListenerList) {
-            listener.onImageTransmitted();
+            listener.onImageTransmitted(imageName, imageType);
         }
     }
 
-    public void sendImage(File file, ImageType imageType) throws Exception {
+    public BufferedImage sendImage(File file, ImageType imageType, String name) throws Exception {
+        BufferedImage image = null;
         if (file.exists()) {
-            BufferedImage image = ImageUtils.convertImage(file, imageType);
+            image = ImageUtils.convertImage(file, imageType);
             if (image != null) {
-                String name = file.getName();
+                if (name == null || name.isEmpty()) {
+                    name = file.getName();
+                }
                 name = name.split("\\.", 2)[0]; // Remove everything after '.'
                 sendImage(image, name, imageType);
             }
         }
+        return image;
     }
 
-    public void sendImage(final BufferedImage image, String name, ImageType imageType) {
+    public void sendImage(final BufferedImage image, final String name, final ImageType imageType) {
 
         if (image != null && name != null && imageType != null) {
             final String message = clientName + "," + imageType.getId() + "," + name;
@@ -114,7 +118,7 @@ public class Client {
                                 // Send image
                                 ImageIO.write(image, "JPG", client.getOutputStream());
                             }
-                            onImageTransmitted();
+                            onImageTransmitted(name, imageType);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -125,7 +129,7 @@ public class Client {
         }
     }
 
-    public void getImage(String name, ImageType imageType) {
+    public void getImage(final String name, final ImageType imageType) {
         if (name != null && imageType != null) {
             final String message = clientName + "," + imageType.getId() + "," + name;
             SocketMessage getImageMessage = new SocketMessage(SocketCommand.GetImage, message, new SocketMessage.OnResponseListener() {
@@ -145,9 +149,9 @@ public class Client {
                     }
 
                         if (image != null && image.getWidth() > 1) {
-                            onImageReceived(image);
+                            onImageReceived(image, name, imageType);
                         } else {
-                            onImageReceived(null);
+                            onImageReceived(null, name, imageType);
                         }
 
                 }
@@ -156,7 +160,7 @@ public class Client {
         }
     }
 
-    public void connectClient(String clientName) {
+    public void connectClient(final String clientName) {
         if (clientName != null) {
 
             if (communicationThread == null) {
@@ -168,7 +172,7 @@ public class Client {
                 @Override
                 public void onResponse(SocketMessage socketMessage) {
                     connected = socketMessage != null && socketMessage.isValid();
-                    onClientConnected();
+                    onClientConnected(clientName);
                 }
             });
             communicationThread.sendMessage(socketMessage);
@@ -182,7 +186,7 @@ public class Client {
                 public void onResponse(SocketMessage socketMessage) {
                     if (socketMessage.isValid()) {
                         connected = false;
-                        onClientDisconnected();
+                        onClientDisconnected(clientName);
                     }
                     if (closeDown) {
                         communicationThread.stopRunning();

@@ -25,7 +25,7 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
 
         createGui();
 
-        client = new Client("192.168.0.162", "Test");
+        client = new Client("192.168.0.182", "Test");
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
@@ -69,7 +69,7 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
 
             if (file.exists()) {
                 try {
-                    client.sendImage(file, ImageType.ItemImage);
+                    client.sendImage(file, ImageType.ItemImage, null);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -129,7 +129,7 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
     }
 
     @Override
-    public void onImageReceived(BufferedImage image) {
+    public void onImageReceived(BufferedImage image, String imageName, ImageType type) {
         if (image != null) {
             ImageIcon imageIcon = new ImageIcon(image);
             imageLabel.setIcon(imageIcon);
@@ -173,17 +173,17 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
     }
 
     @Override
-    public void onConnected() {
+    public void onConnected(String clientName) {
 
     }
 
     @Override
-    public void onDisconnected() {
+    public void onDisconnected(String clientName) {
 
     }
 
     @Override
-    public void onImageTransmitted() {
+    public void onImageTransmitted(String imageName, ImageType imageType) {
 
     }
 }

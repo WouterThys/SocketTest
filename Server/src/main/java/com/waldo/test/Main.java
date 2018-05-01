@@ -1,12 +1,11 @@
 package com.waldo.test;
 
-import com.waldo.test.ImageSocketServer.CommunicationThread;
-import com.waldo.test.ImageSocketServer.ConnectedClient;
-import com.waldo.test.ImageSocketServer.ImageType;
-import com.waldo.test.ImageSocketServer.SocketMessage;
+import com.waldo.test.ImageSocketServer.*;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,90 +20,93 @@ public class Main {
 
     private static final List<ConnectedClient> connectedClients = new ArrayList<>();
 
+    // Message listener
+    private static CommunicationThread.MessageListener messageListener;
+
     public static void main(String[] args) throws Exception {
 
         readArgs(args);
         logger.debug("Starting image server");
 
-        final CommunicationThread communicationThread = new CommunicationThread(msPort, new CommunicationThread.MessageListener() {
-            @Override
-            public SocketMessage onNewMessage(SocketMessage message) {
+        ServerSocket serverSocket = new ServerSocket(msPort);
 
-                SocketMessage result = new SocketMessage(message.getCommand(), "");
-                switch (message.getCommand()) {
+        while (true) {
+            Socket clientSocket = serverSocket.accept();
 
-                    case ConnectClient:
-                        ConnectedClient connectClient = clientConnect(message.getMessage());
-                        if (connectClient != null) {
-                            result.setMessage("Connected " + connectClient);
-                            logger.debug("Connected client: " + connectClient.getName());
-                        }
-                        break;
+            logger.debug("Accepted new client: " + clientSocket.getInetAddress().getHostAddress());
 
-                    case DisconnectClient:
-                        ConnectedClient disconnectClient = clientDisconnect(message.getMessage());
-                        if (disconnectClient != null) {
-                            result.setMessage("Disconnected " + disconnectClient);
-                            logger.debug("Disconnected client: " + disconnectClient.getName());
-                        }
-                        break;
+            ClientThread clientThread = new ClientThread(clientSocket, getMessageListener());
+            clientThread.start();
+        }
+    }
 
-                    case SendImage: {
-                        String[] split = message.getMessage().split(",");
-                        if (split.length == 3) {
-                            String clientName = split[0];
-                            String imageType = split[1];
-                            String imageName = split[2];
-                            ImageType type;
-                            try {
-                                type = ImageType.fromInt(Integer.valueOf(imageType));
-                                int port = clientSendImage(clientName, imageName, type);
-                                result.setMessage(String.valueOf(port));
-                            } catch (Exception e) {
-                                logger.error("Failed to send image", e);
+    private static CommunicationThread.MessageListener getMessageListener() {
+        if (messageListener == null) {
+            messageListener =  new CommunicationThread.MessageListener() {
+                @Override
+                public SocketMessage onNewMessage(SocketMessage message) {
+
+                    SocketMessage result = new SocketMessage(message.getCommand(), "");
+                    switch (message.getCommand()) {
+
+                        case ConnectClient:
+                            ConnectedClient connectClient = clientConnect(message.getMessage());
+                            if (connectClient != null) {
+                                result.setMessage("Connected " + connectClient);
+                                logger.debug("Connected client: " + connectClient.getName());
+                            }
+                            break;
+
+                        case DisconnectClient:
+                            ConnectedClient disconnectClient = clientDisconnect(message.getMessage());
+                            if (disconnectClient != null) {
+                                result.setMessage("Disconnected " + disconnectClient);
+                                logger.debug("Disconnected client: " + disconnectClient.getName());
+                            }
+                            break;
+
+                        case SendImage: {
+                            String[] split = message.getMessage().split(",");
+                            if (split.length == 3) {
+                                String clientName = split[0];
+                                String imageType = split[1];
+                                String imageName = split[2];
+                                ImageType type;
+                                try {
+                                    type = ImageType.fromInt(Integer.valueOf(imageType));
+                                    int port = clientSendImage(clientName, imageName, type);
+                                    result.setMessage(String.valueOf(port));
+                                } catch (Exception e) {
+                                    logger.error("Failed to send image", e);
+                                }
                             }
                         }
-                    }
                         break;
 
-                    case GetImage: {
-                        String[] split = message.getMessage().split(",");
-                        if (split.length == 3) {
-                            String clientName = split[0];
-                            String imageType = split[1];
-                            String imageName = split[2];
-                            ImageType type;
-                            try {
-                                type = ImageType.fromInt(Integer.valueOf(imageType));
-                                int port = clientGetImage(clientName, imageName, type);
-                                result.setMessage(String.valueOf(port));
-                            } catch (Exception e) {
-                                logger.error("Failed to get image", e);
+                        case GetImage: {
+                            String[] split = message.getMessage().split(",");
+                            if (split.length == 3) {
+                                String clientName = split[0];
+                                String imageType = split[1];
+                                String imageName = split[2];
+                                ImageType type;
+                                try {
+                                    type = ImageType.fromInt(Integer.valueOf(imageType));
+                                    int port = clientGetImage(clientName, imageName, type);
+                                    result.setMessage(String.valueOf(port));
+                                } catch (Exception e) {
+                                    logger.error("Failed to get image", e);
+                                }
                             }
                         }
-                    }
                         break;
-                }
-
-                return result;
-            }
-        });
-        communicationThread.start();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    communicationThread.stopRunning();
-                    for (ConnectedClient client : connectedClients) {
-                        client.close();
                     }
-                    logger.debug("Stopped image server");
-                } catch (Exception e) {
-                    //
+
+                    return result;
                 }
-            }
-        }));
+            };
+        }
+        return messageListener;
     }
 
     private static ConnectedClient clientConnect(String name) {

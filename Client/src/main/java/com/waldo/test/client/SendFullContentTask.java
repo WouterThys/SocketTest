@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 public class SendFullContentTask {
@@ -15,9 +14,12 @@ public class SendFullContentTask {
     // 2. Convert content of the folder to jpg images
     // 3. Send converted images to server
 
-    public static final int STATE_READ = 1;
-    public static final int STATE_CONVERT = 2;
-    public static final int STATE_SEND = 3;
+    public static final int STATE_READ1 = 10;
+    public static final int STATE_READ2 = 11;
+    public static final int STATE_CONVERT1 = 20;
+    public static final int STATE_CONVERT2 = 21;
+    public static final int STATE_SEND1 = 30;
+    public static final int STATE_SEND2 = 31;
 
     public interface SendFullContentListener {
         void onError(Exception exception);
@@ -85,7 +87,7 @@ public class SendFullContentTask {
             }
 
             int numberOfFiles = listOfImages.length;
-            updateState(STATE_READ, "Reading " + numberOfFiles + " images", String.valueOf(numberOfFiles));
+            updateState(STATE_READ1, "Reading " + numberOfFiles + " images", String.valueOf(numberOfFiles));
 
             int progress = 0;
             folderContent = new HashMap<>();
@@ -97,7 +99,7 @@ public class SendFullContentTask {
                     folderContent.put(name, inputImage);
                 }
 
-                updateState(STATE_READ, "Caching images", String.valueOf(progress));
+                updateState(STATE_READ2, "Caching images", String.valueOf(progress));
                 progress++;
             }
 
@@ -105,14 +107,14 @@ public class SendFullContentTask {
             // 2. Convert content of the folder to scaled jpg images
             //
             numberOfFiles = folderContent.size();
-            updateState(STATE_CONVERT, "Converting " + numberOfFiles + " images", String.valueOf(numberOfFiles));
+            updateState(STATE_CONVERT1, "Converting " + numberOfFiles + " images", String.valueOf(numberOfFiles));
 
             progress = 0;
             for (String name : folderContent.keySet()) {
                 BufferedImage oldImage = folderContent.get(name);
                 folderContent.put(name, ImageUtils.convertImage(oldImage, imageType));
 
-                updateState(STATE_READ, "Converting image " + name, String.valueOf(progress));
+                updateState(STATE_CONVERT2, "Converting image " + name, String.valueOf(progress));
                 progress++;
             }
 
@@ -120,7 +122,7 @@ public class SendFullContentTask {
             // 3. Send converted images to server
             //
             numberOfFiles = folderContent.size();
-            updateState(STATE_SEND, "Sending " + numberOfFiles + " images", String.valueOf(numberOfFiles));
+            updateState(STATE_SEND1, "Sending " + numberOfFiles + " images", String.valueOf(numberOfFiles));
 
             progress = 0;
             for (String name : folderContent.keySet()) {
@@ -128,15 +130,15 @@ public class SendFullContentTask {
 
                 try {
                     client.sendImage(image, name, imageType);
-                    updateState(STATE_SEND, "Sending image " + name, String.valueOf(progress));
+                    updateState(STATE_SEND2, "Sending image " + name, String.valueOf(progress));
                 } catch (Exception ex) {
-                    updateState(STATE_SEND, "Sending image " + name + " failed", String.valueOf(progress));
+                    updateState(STATE_SEND2, "Sending image " + name + " failed", String.valueOf(progress));
                 }
 
                 progress++;
             }
 
-            updateState(STATE_SEND, "Done");
+            updateState(STATE_SEND2, "Done");
 
             return true;
         }
