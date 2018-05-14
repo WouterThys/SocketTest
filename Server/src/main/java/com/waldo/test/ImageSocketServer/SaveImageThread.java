@@ -37,31 +37,40 @@ class SaveImageThread extends Thread {
             return;
         }
 
-        String extension = FilenameUtils.getExtension(imageName);
-        if (extension.isEmpty()) {
-            extension = "JPG";
-            imageName += ".jpg";
-        }
-
-        Path folderPath = Paths.get(Main.rootDirectory, imageType.getFolderName());
-        File imageFolder = new File(folderPath.toUri());
-
-        boolean ok = true;
-        if (!imageFolder.exists()) {
-            ok = imageFolder.mkdirs();
-        }
-
-        if (ok) {
-            Path path = Paths.get(imageFolder.toString(), imageName);
-            File imageFile = new File(path.toUri());
-
-            try {
-                ImageIO.write(image, extension, imageFile);
-            } catch (IOException e) {
-                logger.error("Can not save image" , e);
+        try {
+            String extension = FilenameUtils.getExtension(imageName);
+            if (extension.isEmpty()) {
+                extension = "JPG";
+                imageName += ".jpg";
             }
-        } else {
-            logger.error("Can not save image, folder can not be found or created..");
+
+            Path folderPath = Paths.get(Main.rootDirectory, imageType.getFolderName());
+            File imageFolder = new File(folderPath.toUri());
+
+            boolean ok = true;
+            if (!imageFolder.exists()) {
+                ok = imageFolder.mkdirs();
+                if (ok) {
+                    logger.debug("Created folder " + imageFolder);
+                }
+            }
+
+            if (ok) {
+                Path path = Paths.get(imageFolder.toString(), imageName);
+                File imageFile = new File(path.toUri());
+
+                try {
+                    ImageIO.write(image, extension, imageFile);
+                    logger.debug("Saved image " + imageName + " in folder " + imageFolder);
+                } catch (IOException e) {
+                    logger.error("Can not save image" , e);
+                }
+            } else {
+                logger.error("Can not save image, folder can not be found or created..");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to save image " + imageName, e);
         }
+
     }
 }

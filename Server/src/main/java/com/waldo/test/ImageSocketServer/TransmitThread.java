@@ -21,10 +21,6 @@ class TransmitThread extends ImageThread {
 
         try {
 
-//            if (!imageName.endsWith(".jpg")) {
-//                imageName += ".jpg";
-//            }
-
             // Read image
             Path imagePath = Paths.get(Main.rootDirectory, imageType.getFolderName(), imageName);
 
