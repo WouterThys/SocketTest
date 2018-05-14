@@ -1,6 +1,7 @@
 package com.waldo.test.ImageSocketServer;
 
 import com.waldo.test.Main;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -36,7 +37,9 @@ class SaveImageThread extends Thread {
             return;
         }
 
-        if (!imageName.endsWith(".jpg")) {
+        String extension = FilenameUtils.getExtension(imageName);
+        if (extension.isEmpty()) {
+            extension = "JPG";
             imageName += ".jpg";
         }
 
@@ -53,7 +56,7 @@ class SaveImageThread extends Thread {
             File imageFile = new File(path.toUri());
 
             try {
-                ImageIO.write(image, "jpg", imageFile);
+                ImageIO.write(image, extension, imageFile);
             } catch (IOException e) {
                 logger.error("Can not save image" , e);
             }

@@ -3,6 +3,7 @@ package com.waldo.test;
 import com.waldo.test.ImageSocketServer.*;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -25,11 +26,20 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        readArgs(args);
         logger.debug("Starting image server");
+        readArgs(args);
+        logger.debug("Checking root directory (" + rootDirectory + ")");
+        File dirCheck = new File(rootDirectory);
+        if (dirCheck.exists() && dirCheck.isDirectory()) {
+            logger.debug(" -> OK");
+        } else {
+            logger.debug(" -> Invalid root directory, closing..");
+            System.exit(-1);
+        }
 
         ServerSocket serverSocket = new ServerSocket(msPort);
 
+        logger.debug("Server is running!!");
         while (true) {
             Socket clientSocket = serverSocket.accept();
 

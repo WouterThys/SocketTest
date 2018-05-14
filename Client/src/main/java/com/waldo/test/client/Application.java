@@ -14,6 +14,7 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
 
     private JLabel imageLabel;
 
+    private JButton connectBtn;
     private JButton sendAllBtn;
     private JButton selectImageBtn;
     private JButton getImageBtn;
@@ -25,7 +26,8 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
 
         createGui();
 
-        client = new Client("192.168.0.182", "Test");
+        client = new Client("192.168.0.106", "Test");
+        client.addImageClientListener(this);
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
@@ -39,6 +41,9 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
     private void createGui() {
         imageLabel = new JLabel();
 
+        connectBtn = new JButton("Connect");
+        connectBtn.addActionListener(this);
+
         selectImageBtn = new JButton("Send image");
         selectImageBtn.addActionListener(this);
 
@@ -51,6 +56,11 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
         JPanel mainPanel = new JPanel(new BorderLayout());
         JPanel btnPanel = new JPanel();
 
+        sendAllBtn.setEnabled(false);
+        selectImageBtn.setEnabled(false);
+        getImageBtn.setEnabled(false);
+
+        btnPanel.add(connectBtn);
         btnPanel.add(selectImageBtn);
         btnPanel.add(getImageBtn);
         btnPanel.add(sendAllBtn);
@@ -59,6 +69,36 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
         mainPanel.add(btnPanel, BorderLayout.NORTH);
 
         add(mainPanel);
+    }
+
+    private void doConnectClient(Client client) {
+        if (client != null) {
+            if (client.isConnected()) {
+                client.disconnectClient(false);
+            }
+            client.connectClient();
+
+        } else {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Invalid client..",
+                    "Invalid",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    private void doDisconnectClient(Client client) {
+        if (client != null) {
+            client.disconnectClient(false);
+        } else {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Invalid client..",
+                    "Invalid",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     private void doSelectImage() {
@@ -147,39 +187,50 @@ public class Application extends JFrame implements ActionListener, Client.ImageC
     @Override
     public void actionPerformed(ActionEvent e) {
         if (client != null) {
-            if (e.getSource().equals(selectImageBtn)) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        doSelectImage();
+            if (e.getSource().equals(connectBtn)) {
+                SwingUtilities.invokeLater(() -> {
+                    if (client.isConnected()) {
+                        doDisconnectClient(client);
+                    } else {
+                        doConnectClient(client);
                     }
                 });
+            } else if (e.getSource().equals(selectImageBtn)) {
+                SwingUtilities.invokeLater(this::doSelectImage);
             } else if (e.getSource().equals(getImageBtn)) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        doGetImage();
-                    }
-                });
+                SwingUtilities.invokeLater(this::doGetImage);
             } else if (e.getSource().equals(sendAllBtn)) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        doSendAll();
-                    }
-                });
+                SwingUtilities.invokeLater(this::doSendAll);
             }
         }
     }
 
     @Override
     public void onConnected(String clientName) {
-
+        JOptionPane.showMessageDialog(
+                this,
+                "Client " + clientName + " is connected!!",
+                "Connected",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        connectBtn.setText("Disconnect");
+        sendAllBtn.setEnabled(true);
+        selectImageBtn.setEnabled(true);
+        getImageBtn.setEnabled(true);
     }
 
     @Override
     public void onDisconnected(String clientName) {
-
+        JOptionPane.showMessageDialog(
+                this,
+                "Client " + clientName + " is disconnected..",
+                "Connected",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        connectBtn.setText("Connect");
+        sendAllBtn.setEnabled(false);
+        selectImageBtn.setEnabled(false);
+        getImageBtn.setEnabled(false);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.waldo.test.client;
 import com.waldo.test.ImageSocketServer.ImageType;
 import com.waldo.test.ImageSocketServer.SocketCommand;
 import com.waldo.test.ImageSocketServer.SocketMessage;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -99,16 +100,36 @@ public class Client {
                 if (name == null || name.isEmpty()) {
                     name = file.getName();
                 }
-                name = name.split("\\.", 2)[0]; // Remove everything after '.'
                 sendImage(image, name, imageType);
             }
         }
         return image;
     }
 
+    private String findExtension(String name) {
+        String extension = null;
+        if (name != null) {
+            extension = FilenameUtils.getExtension(name);
+            if (extension.isEmpty()) {
+                extension = "JPG";
+            } else {
+                if (extension.equalsIgnoreCase("JPG") ||
+                        extension.equalsIgnoreCase("GIF") ||
+                        extension.equalsIgnoreCase("PNG")) {
+
+                    extension = extension.toUpperCase();
+                } else {
+                    extension = "JPG";
+                }
+            }
+        }
+        return extension;
+    }
+
     public void sendImage(final BufferedImage image, final String name, final ImageType imageType) {
 
         if (image != null && name != null && imageType != null) {
+            final String ext = findExtension(name);
             final String message = clientName + "," + imageType.getId() + "," + name;
             SocketMessage sendImageMessage = new SocketMessage(SocketCommand.SendImage, message, new SocketMessage.OnResponseListener() {
                 @Override
@@ -120,7 +141,7 @@ public class Client {
                             try (Socket client = new Socket(serverName, port)) {
                                 client.setSoTimeout(2000);
                                 // Send image
-                                ImageIO.write(image, "JPG", client.getOutputStream());
+                                ImageIO.write(image, ext, client.getOutputStream());
                             }
                             onImageTransmitted(name, imageType);
                         } catch (Exception e) {
@@ -166,7 +187,7 @@ public class Client {
         }
     }
 
-    public void connectClient(final String clientName) {
+    public void connectClient() {
         if (clientName != null) {
 
             if (communicationThread == null) {

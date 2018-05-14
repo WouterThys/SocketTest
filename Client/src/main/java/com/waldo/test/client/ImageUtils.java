@@ -18,24 +18,26 @@ public class ImageUtils {
         return bufferedImage;
     }
 
-    public static BufferedImage convertImage(BufferedImage inputImage, ImageType imageType) throws Exception {
-        BufferedImage bufferedImage = null;
-            if (inputImage != null) {
-                Dimension dimension = getScaledDimension(inputImage.getWidth(), inputImage.getHeight(), imageType.getDimension());
-
-                Image tmp = inputImage.getScaledInstance(dimension.width, dimension.height, Image.SCALE_SMOOTH);
-                BufferedImage scaled = new BufferedImage(dimension.width, dimension.height, inputImage.getType());
-
-                Graphics2D g2d = scaled.createGraphics();
-                g2d.drawImage(tmp, 0, 0, null);
-                g2d.dispose();
-
-                bufferedImage = new BufferedImage(scaled.getWidth(), scaled.getHeight(), BufferedImage.TYPE_INT_RGB);
-                bufferedImage.createGraphics().drawImage(scaled, 0, 0, Color.WHITE, null);
-
-            }
-
-        return bufferedImage;
+    public static BufferedImage convertImage(BufferedImage inputImage, ImageType imageType) {
+        return inputImage;
+//        BufferedImage bufferedImage = null;
+//            if (inputImage != null) {
+//                Dimension dimension = getScaledDimension(inputImage.getWidth(), inputImage.getHeight(), imageType.getDimension());
+//
+//                Image tmp = inputImage.getScaledInstance(dimension.width, dimension.height, Image.SCALE_SMOOTH);
+//                BufferedImage scaled = new BufferedImage(dimension.width, dimension.height, inputImage.getType());
+//
+//                Graphics2D g2d = scaled.createGraphics();
+//                g2d.drawImage(tmp, 0, 0, null);
+//                g2d.setComposite(AlphaComposite.Src);
+//                g2d.dispose();
+//
+//                bufferedImage = new BufferedImage(scaled.getWidth(), scaled.getHeight(), inputImage.getType());
+//                bufferedImage.createGraphics().drawImage(scaled, 0, 0, Color.WHITE, null);
+//
+//            }
+//
+//        return bufferedImage;
     }
 
     public static  Dimension getScaledDimension(int originalWidth, int originalHeight, Dimension boundary) {
